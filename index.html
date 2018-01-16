@@ -6,6 +6,7 @@
   <link rel="stylesheet" type="text/css" href="src/css/login.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="src/js/login.js"></script>
 </head>
 
@@ -24,8 +25,12 @@
               <input class="form-control" id="password" type="password"></input>
               <br/>
               <input type="submit" class="btn btn-primary" id="loginBtn" value="Login" />
-              <input type="submit" class="btn btn-primary" id="guestBtn" value="Play as Guest" />
+              <input type="button" class="btn btn-primary" id="guestBtn" value="Play as Guest" />
             </form>
+            <div id="loggedIn">
+              <h3 id="playerWelcome"></h3>
+              <div id="playerStats"></div>
+            </div>
           </div>
           <div id="lobbyInfo" class="well">
             <input type="button" id="joinPublicBtn" class="btn btn-primary" value="Join Public Game"></input>
@@ -51,13 +56,13 @@
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
               <div class="carousel-inner">
                 <div class="item active">
-                  <img src="C:\Users\lrobe\Desktop\image1.png" style="width:100%; height:196px;">
+                  <img src="src\img\image1.png" style="width:100%; height:196px;">
                 </div>
                 <div class="item">
-                  <img src="C:\Users\lrobe\Desktop\image2.png" style="width:100%; height:196px;">
+                  <img src="src\img\image2.png" style="width:100%; height:196px;">
                 </div>
                 <div class="item">
-                  <img src="C:\Users\lrobe\Desktop\image3.png" style="width:100%; height:196px;">
+                  <img src="src\img\image3.png" style="width:100%; height:196px;">
                 </div>
               </div>
             </div>
