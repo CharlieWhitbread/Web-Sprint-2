@@ -7,11 +7,15 @@ $(function() {
 
   $userForm.submit(function(e) {
     e.preventDefault();
-    if ($username.val().length <= 10) {
-      socket.emit('login user', $username.val(), function(data) {});
-    } else {
-      console.log("too many characters");
-    }
+    socket.emit('islogged in', $username.val(), function(data) {
+      if (data) {
+        if ($username.val().length <= 10 && $username.val().length > 0) {
+          socket.emit('login user', $username.val(), function(data) {});
+        } else {
+          console.log("too many characters");
+        }
+      }
+    });
   });
 
   $('#guestBtn').click(function(e) {

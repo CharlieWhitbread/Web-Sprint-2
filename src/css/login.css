@@ -9,8 +9,8 @@ h3 {
 }
 
 #gameDetails {
-  min-height: 250px;
-  max-height: 250px;
+  min-height: 235px;
+  max-height: 235px;
   overflow-y: scroll;
 }
 
@@ -21,4 +21,16 @@ h3 {
 
 #loggedIn {
   display: none;
+}
+
+.btn-group {
+  width: 100%;
+}
+
+.uiBtn {
+  width: 50%;
+}
+
+#JoinCustomBtn {
+  width: 100%;
 }

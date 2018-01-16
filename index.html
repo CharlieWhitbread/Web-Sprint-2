@@ -24,8 +24,10 @@
               <label>Enter Password</label>
               <input class="form-control" id="password" type="password"></input>
               <br/>
-              <input type="submit" class="btn btn-primary" id="loginBtn" value="Login" />
-              <input type="button" class="btn btn-primary" id="guestBtn" value="Play as Guest" />
+              <div class="btn-group">
+                <input type="submit" class="btn btn-primary uiBtn" id="loginBtn" value="Login" />
+                <input type="button" class="btn btn-primary uiBtn" id="guestBtn" value="Play as Guest" />
+              </div>
             </form>
             <div id="loggedIn">
               <h3 id="playerWelcome"></h3>
@@ -33,9 +35,11 @@
             </div>
           </div>
           <div id="lobbyInfo" class="well">
-            <input type="button" id="joinPublicBtn" class="btn btn-primary" value="Join Public Game"></input>
+            <div class="btn-group">
+              <input type="button" id="joinPublicBtn" class="btn btn-primary uiBtn" value="Join Public Game"></input>
+              <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Custom Game"></input>
+            </div>
             <br/>
-            <input type="button" id="createCustomBtn" class="btn btn-primary" value="Create Custom Game"></input>
             <br/>
             <label>Enter Custom Lobby URL</label>
             <br/>

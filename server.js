@@ -7,7 +7,6 @@ var $ = require('jquery');
 
 loggedInUsers = [];
 connections = [];
-currentHost = '';
 
 server.listen(process.env.PORT || 3000);
 console.log('Server running...');
@@ -20,7 +19,6 @@ app.get('/', function(req, res) {
 
 io.sockets.on('connection', function(socket) {
   connections.push(socket);
-  console.log(connections.length);
 
   // Disconnect
   socket.on('disconnect', function(data) {
@@ -32,23 +30,39 @@ io.sockets.on('connection', function(socket) {
     callback(true);
     socket.username = data;
     loggedInUsers.push(socket.username);
-    console.log(socket.username);
+    console.log(socket.username + " has logged in");
     changeLoginLayout();
   });
-
+  //Login Guest
   socket.on('login guest', function() {
     socket.username = getNewGuestName();
-    console.log(socket.username);
+    loggedInUsers.push(socket.username);
+    console.log(socket.username + " is a guest account");
     changeLoginLayout();
   });
+  //Is the user logged in already or someone has the same name
+  socket.on('islogged in', function(data, callback) {
+    var match = false;
+    for (var i = 0; i <= loggedInUsers.length; i++) {
+      if (loggedInUsers[i] == data) {
+        callback(false);
+      } else {
+        match = true;
+      }
+    }
+    if (match) {
+      callback(true);
+    }
+  });
 
+  //Create guest name
   function getNewGuestName() {
     var users = Moniker.generator([Moniker.adjective]);
     return users.choose();
   }
-
+  //Changes the login layout to show the user and stats
   function changeLoginLayout() {
     socket.emit("changelogin layout", socket.username);
+    console.log(loggedInUsers.length + "players are logged in");
   }
-
 });
