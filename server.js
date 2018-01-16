@@ -7,6 +7,7 @@ var $ = require('jquery');
 
 loggedInUsers = [];
 connections = [];
+rooms = [];
 
 server.listen(process.env.PORT || 3000);
 console.log('Server running...');
@@ -23,6 +24,11 @@ io.sockets.on('connection', function(socket) {
   // Disconnect
   socket.on('disconnect', function(data) {
     connections.splice(connections.indexOf(socket), 1);
+    for (var i = 0; i <= loggedInUsers.length; i++) {
+      if (loggedInUsers[i] == socket.username && socket.username != null) {
+        loggedInUsers.splice(loggedInUsers.indexOf(socket.username), 1);
+      }
+    }
   });
 
   //Login user
@@ -64,5 +70,17 @@ io.sockets.on('connection', function(socket) {
   function changeLoginLayout() {
     socket.emit("changelogin layout", socket.username);
     console.log(loggedInUsers.length + "players are logged in");
+  }
+  //Creating the lobby for either public or private
+  socket.on('create room', function(typeOfLobby) {
+    console.log(typeOfLobby);
+  });
+  //Creates the lobby for either private or public
+  function createLobby(typeOfLobby) {
+
+  }
+  //Join the lobby for either private or Public
+  function joinLobby(typeOfLobby) {
+
   }
 });

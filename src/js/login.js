@@ -28,9 +28,25 @@ $(function() {
     $loggedIn.show();
     myUsername = data;
     displayUserInfo(myUsername);
-  })
+  });
 
   function displayUserInfo(username) {
     $loggedIn.append('<h3>Welcome ' + username + '</h3>');
   }
+});
+
+
+
+
+
+//Joining a public lobby or creating a public lobby
+$('#joinPublicBtn').click(function(e) {
+  e.preventDefault()
+  socket.emit('create room', 'public')
+});
+
+//Creating a private lobby
+$('#createCustomBtn').click(function(e) {
+  e.preventDefault()
+  socket.emit('create room', 'private')
 });
