@@ -31,17 +31,25 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
+  socket.on('log out', function(data){
+    //if you logout you remove yourself from users list but remain a connection
+    console.log(socket.username + " logged out!");
+    loggedInUsers.splice(loggedInUsers.indexOf(socket.username),1);
+    socket.emit("revert login",socket.username);
+  });
+
   //Login user
   socket.on('login user', function(data, callback) {
     callback(true);
-    socket.username = data;
+    //Changes to uppercade and assigns to socket.username
+    socket.username = jsUcfirst(data);
     loggedInUsers.push(socket.username);
     console.log(socket.username + " has logged in");
     changeLoginLayout();
   });
   //Login Guest
   socket.on('login guest', function() {
-    socket.username = getNewGuestName();
+    socket.username = jsUcfirst(getNewGuestName());
     loggedInUsers.push(socket.username);
     console.log(socket.username + " is a guest account");
     changeLoginLayout();
@@ -60,6 +68,12 @@ io.sockets.on('connection', function(socket) {
       callback(true);
     }
   });
+
+  //Changes first charecter uppercase gGj -> Ggj
+  function jsUcfirst(string)
+  {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   //Create guest name
   function getNewGuestName() {

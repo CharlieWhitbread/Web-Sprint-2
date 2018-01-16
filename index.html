@@ -9,7 +9,6 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="src/js/login.js"></script>
 </head>
-
 <body>
   <div class="container">
     <div id="userFormArea" class="row">
@@ -31,22 +30,21 @@
             </form>
             <div id="loggedIn">
               <h3 id="playerWelcome"></h3>
-              <div id="playerStats"></div>
             </div>
           </div>
           <div id="lobbyInfo" class="well">
+              <input type="button" id="playButton" class="btn btn-success uiBtn" value="Play!"></input>
+            <br/>
+            <br/>
             <div class="btn-group">
-              <input type="button" id="joinPublicBtn" class="btn btn-primary uiBtn" value="Join Public Lobby"></input>
-              <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby"></input>
-            </div>
-            <br/>
-            <br/>
-            <label>Enter Custom Lobby URL</label>
-            <br/>
-            <input class="form-control" id="customLobbyURL"></input>
-            <br/>
-            <input type="button" id="JoinCustomBtn" class="btn btn-primary" value="Join Private Lobby"></input>
+            <input type="button" id="JoinCustomBtn" class="btn btn-primary uiBtn" value="Join Private Lobby"></input>
+            <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby"></input>
+            <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID"></input>
           </div>
+          <br/>
+          <div>
+          </div>
+        </div>
         </div>
         <div class="col-md-6">
           <div id="gameInfo" class="well">
