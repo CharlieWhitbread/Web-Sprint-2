@@ -6,6 +6,13 @@ var io = require('socket.io').listen(server);
 var $ = require('jquery');
 
 
+var rooms = [
+		// {
+		// 		roomID: 654321,
+    //     players: [],
+    //     maxPlayers: 8 // maybe rename to maxPlayers
+    // },
+];
 
 users = [];
 connections = [];
@@ -94,15 +101,45 @@ io.sockets.on('connection',function(socket){
 		io.sockets.emit('player join',socket.username)
 	});
 
-	socket.on('new guest',function(){
-		var generatedName = getGuestName();
-		socket.username = generatedName;
-		users.push(socket.username);
-		io.sockets.emit('lobby users', users);
-		assignHost(socket.username);
-		updateUsernames();
-		io.sockets.emit('player join',socket.username)
-	});
+		socket.on('join room', function(roomID) {
+			var roomFound = false;
+			for (var i = 0; i < rooms.length; i++) {
+				if(rooms[i].roomID == roomID){
+					//if room as been found
+					rooms[i].players.push("");
+					console.log("Player has joined room "+roomID);
+					console.log(rooms[i].roomID+" has "+rooms[i].players.length+" players in the room");
+					roomFound = true;
+				}
+			}
+			if(!roomFound)
+				console.log("Room "+roomID+" does not exist!");
+				// this.emit('join game',url);
+    });
+
+		socket.on('create room', function() {
+				//generate random 6 digit roomID
+				var generatedRoomID = Math.floor(100000 + Math.random() * 900000);
+
+				var newRoom = {};
+				newRoom.roomID = generatedRoomID;
+				newRoom.players = [];
+				newRoom.maxPlayers = 8;
+
+				rooms.push(newRoom);
+				// rooms[roomID] = newRoom;
+
+				console.log("Room: "+generatedRoomID+" created!");
+				console.log("Rooms: "+rooms);
+				// rooms.push(newRoom);
+				// rooms[roomID].players.push("test");
+				// console.log("Player has joined "+roomID);
+				// console.log("Players in Lobby "+rooms[roomID].players.length);
+				// // io.to(room).emit("join game", rooms[room].count);
+				// this.emit('join game',url);
+		});
+
+
 
 	function updateUsernames(){
 		io.sockets.emit('get users', users);

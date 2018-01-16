@@ -9,6 +9,7 @@ $(function() {
     var $userForm = $('#userForm');
     var $panel = $('#panel');
     var $guestButton=$('#guestButton');
+    var $createRoomButton=$('#createRoomButton');
     var $wordDisplay = $('#wordDisplay');
     var $users = $('#users');
     var $username = $('#username');
@@ -34,31 +35,34 @@ $(function() {
         }
     });
 
-    $guestButton.click(function(e) {
+
+    $createRoomButton.click(function(e) {
       //if login as guest
-      socket.emit('new guest');
-      $userFormArea.hide();
-      $messageArea.show();
+      socket.emit('create room');
+
+      //
     });
 
 
     //changes to the lobby area
     $userForm.submit(function(e) {
-        e.preventDefault();
-        if($username.val().length <= 10 && $.inArray($username.val(),lobbyUsers) == -1){
-          console.log($username.val(),lobbyUsers);
-          socket.emit('new user', $username.val(), function(data) {
-            if (data) {
-                $userFormArea.hide();
-                $messageArea.show();
-            }
-        });
-      }
-        else{
-          console.log("too many characters");
-        }
-        myusername = $username.val();
-        $username.val('');
+
+        socket.emit('join room',$username.val());
+      //   e.preventDefault();
+      //   if($username.val().length <= 10 && $.inArray($username.val(),lobbyUsers) == -1){
+      //     console.log($username.val(),lobbyUsers);
+      //     socket.emit('new user', $username.val(), function(data) {
+      //       if (data) {
+      //           $userFormArea.hide();
+      //           $messageArea.show();
+      //       }
+      //   });
+      // }
+      //   else{
+      //     console.log("too many characters");
+      //   }
+      //   myusername = $username.val();
+      //   $username.val('');
     });
 
     // When a client connects
