@@ -1,0 +1,15 @@
+body {
+  margin-top: 30px;
+  background-color: #ADD8E6;
+}
+
+h3 {
+  text-align: center;
+  font-weight: bold
+}
+
+#gameDetails {
+  min-height: 250px;
+  max-height: 250px;
+  overflow-y: scroll;
+}

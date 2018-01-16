@@ -1,0 +1,71 @@
+<html>
+
+<head>
+  <title>Main Menu</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="src/css/login.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="src/js/login.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div id="userFormArea" class="row">
+      <div class="col-md-12">
+        <div class="col-md-6">
+          <div id="loginBox" class="well">
+            <form id="userForm">
+              <h3>Login</h3>
+              <label>Enter Username</label>
+              <input class="form-control" id="username"></input>
+              <br/>
+              <label>Enter Password</label>
+              <input class="form-control" id="password" type="password"></input>
+              <br/>
+              <input type="submit" class="btn btn-primary" id="loginBtn" value="Login" />
+              <input type="submit" class="btn btn-primary" id="guestBtn" value="Play as Guest" />
+            </form>
+          </div>
+          <div id="lobbyInfo" class="well">
+            <input type="button" id="joinPublicBtn" class="btn btn-primary" value="Join Public Game"></input>
+            <br/>
+            <input type="button" id="createCustomBtn" class="btn btn-primary" value="Create Custom Game"></input>
+            <br/>
+            <label>Enter Custom Lobby URL</label>
+            <br/>
+            <input class="form-control" id="customLobbyURL"></input>
+            <br/>
+            <input type="button" id="JoinCustomBtn" class="btn btn-primary" value="Join Custom Game"></input>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div id="gameInfo" class="well">
+            <h3>Welcome to [Insert Game Name]</h3>
+            <div id="gameDetails">
+              <p>Description: </p>
+              <p>Latest Update:</p>
+              <p>Coming Soon:</p>
+              <p>Changelog:</p>
+            </div>
+            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+              <div class="carousel-inner">
+                <div class="item active">
+                  <img src="C:\Users\lrobe\Desktop\image1.png" style="width:100%; height:196px;">
+                </div>
+                <div class="item">
+                  <img src="C:\Users\lrobe\Desktop\image2.png" style="width:100%; height:196px;">
+                </div>
+                <div class="item">
+                  <img src="C:\Users\lrobe\Desktop\image3.png" style="width:100%; height:196px;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
