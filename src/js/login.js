@@ -1,6 +1,7 @@
 $(function() {
   var socket = io.connect();
   var $username = $('#username');
+  var $customLobbyURL=$('#customLobbyURL');
   var $userForm = $('#userForm');
   var $playerStats = $('#playerStats');
   var $loginControl = $('#loginControl');
@@ -26,8 +27,25 @@ $(function() {
     socket.emit('login guest');
   });
 
+  $('#playButton').click(function(e) {
+    e.preventDefault();
+    socket.emit('play button', );
+  });
 
-  //after someone logs in
+  //if they want to join a custom lobbylobby
+  $('#joinCustomBtn').click(function(e) {
+    e.preventDefault
+    var customlobbyInput = $('#customLobbyURL').val();
+    console.log("attempting to join:"+ customlobbyInput);
+    socket.emit('join custom',customlobbyInput);
+  });
+
+  //create custom lobby
+  $('#createCustomBtn').click(function(e) {
+    e.preventDefault
+    socket.emit('create custom');
+  });
+
   socket.on('changelogin layout', function(data) {
     $userForm.hide();
     $loggedIn.show();
