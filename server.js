@@ -58,9 +58,10 @@ io.sockets.on('connection', function(socket) {
   });
   //Is the user logged in already or someone has the same name
   socket.on('islogged in', function(data, callback) {
+    var formattedUser = jsUcfirst(data)
     var match = false;
     for (var i = 0; i <= loggedInUsers.length; i++) {
-      if (loggedInUsers[i] == data) {
+      if (loggedInUsers[i] == formattedUser) {
         callback(false);
       } else {
         match = true;
@@ -74,7 +75,8 @@ io.sockets.on('connection', function(socket) {
   //Changes first charecter uppercase gGj -> Ggj
   function jsUcfirst(string)
   {
-      return string.charAt(0).toUpperCase() + string.slice(1);
+      var lowcasestring = string.toLowerCase();
+      return lowcasestring.charAt(0).toUpperCase() + lowcasestring.slice(1);
   }
 
   //Create guest name

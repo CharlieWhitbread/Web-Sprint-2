@@ -12,7 +12,7 @@ $(function() {
     e.preventDefault();
     socket.emit('islogged in', $username.val(), function(data) {
       if (data) {
-        if ($username.val().length <= 10 && $username.val().length > 0) {
+        if ($username.val().length <= 10) {
           socket.emit('login user', $username.val(), function(data) {});
         } else {
           console.log("too many characters");
@@ -52,6 +52,7 @@ $(function() {
     myUsername = data;
     //This is to stop multiple appends on the stats elements
     displayUserInfo(myUsername);
+    $('#lobbyInfo').find('*').removeAttr('disabled');
   });
 
   //if someone logs out
@@ -59,6 +60,7 @@ $(function() {
     $userForm.show();
     $loggedIn.hide();
     myUsername = "";
+    $('#lobbyInfo').find('*').attr('disabled', true);
   });
 
   function displayUserInfo(username) {

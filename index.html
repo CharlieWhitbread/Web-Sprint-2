@@ -18,7 +18,7 @@
             <form id="userForm">
               <h3>Login</h3>
               <label>Enter Username</label>
-              <input class="form-control" id="username"></input>
+              <input class="form-control" id="username" required></input>
               <br/>
               <label>Enter Password</label>
               <input class="form-control" id="password" type="password"></input>
@@ -33,13 +33,16 @@
             </div>
           </div>
           <div id="lobbyInfo" class="well">
-              <input type="button" id="playButton" class="btn btn-success uiBtn" value="Play!"></input>
+              <input type="button" id="playButton" class="btn btn-success uiBtn" value="Play!" disabled></input>
             <br/>
             <br/>
             <div class="btn-group">
-            <input type="button" id="joinCustomBtn" class="btn btn-primary uiBtn" value="Join Private Lobby"></input>
-            <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby"></input>
-            <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID"></input>
+            <input type="button" id="joinCustomBtn" class="btn btn-primary uiBtn" value="Join Private Lobby" disabled></input>
+            <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby" disabled></input>
+          </div>
+          <div class="btn-group">
+            <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID" disabled></input>
+            <input type="button" id="shopBtn" class="btn btn-warning uiBtn" value="Shop" disabled></input>
           </div>
           <br/>
           <div>
@@ -48,7 +51,7 @@
         </div>
         <div class="col-md-6">
           <div id="gameInfo" class="well">
-            <h3>Welcome to [Insert Game Name]</h3>
+            <h3>Welcome to Depiction</h3>
             <div id="gameDetails">
               <p>Play with your friends or random people, test your drawing skills, humour and quick whit in this Chinese-whispers meets Pictionary bonanza! </p>
               <b>V.1.0</b>
