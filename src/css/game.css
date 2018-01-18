@@ -1,0 +1,66 @@
+body{
+  margin-top: 30px;
+  background-color: #ADD8E6;
+}
+#onlineUsers h3{
+  text-align: center;
+}
+#hostControls h3{
+  text-align: center;
+}
+#wordDisplay{
+  text-align: center;
+}
+#wordDisplay h1{
+  color:red;
+}
+#buttonControls{
+  display: flex;
+  justify-content: space-between;
+}
+.well{
+}
+#chat{
+  max-height: 380;
+  overflow-y: scroll;
+}
+#otherMessage, #userMessage, #serverMessage{
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+#userMessage{
+  text-align: right;
+  color:blue;
+}
+#serverMessage{
+  color:red;
+  text-align:center;
+}
+#message{
+  resize: none;
+}
+#kickControls{
+    display: flex;
+    justify-content: space-between;
+}
+#roundTimeInput{
+  width: 100px;
+}
+
+.host, .player{
+  text-align: right;
+  font-size: 20px;
+  height:50px;
+}
+
+.host{
+  color:red;
+}
+.host img, .player img{
+  float:left;
+}
+
+.player{
+  color:blue;
+}

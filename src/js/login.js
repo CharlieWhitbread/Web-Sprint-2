@@ -1,3 +1,6 @@
+var myUsername;
+var myRoomID;
+
 $(function() {
   var socket = io.connect();
   var $username = $('#username');
@@ -6,7 +9,6 @@ $(function() {
   var $playerStats = $('#playerStats');
   var $loginControl = $('#loginControl');
   var $loggedIn = $('#loggedIn');
-  var myUsername;
 
   $userForm.submit(function(e) {
     e.preventDefault();
@@ -20,7 +22,6 @@ $(function() {
       }
     });
   });
-
 //login as Guest
   $('#guestBtn').click(function(e) {
     e.preventDefault();
@@ -29,7 +30,10 @@ $(function() {
 
   $('#playButton').click(function(e) {
     e.preventDefault();
-    socket.emit('play button', );
+    socket.emit('play button');
+    // send username and create room id to the server
+    // store the values
+    // redirect and access them values from the server
   });
 
   //if they want to join a custom lobbylobby
@@ -50,6 +54,7 @@ $(function() {
     $userForm.hide();
     $loggedIn.show();
     myUsername = data;
+    localStorage.setItem("username", myUsername);
     //This is to stop multiple appends on the stats elements
     displayUserInfo(myUsername);
     $('#lobbyInfo').find('*').removeAttr('disabled');
@@ -61,6 +66,11 @@ $(function() {
     $loggedIn.hide();
     myUsername = "";
     $('#lobbyInfo').find('*').attr('disabled', true);
+  });
+
+  socket.on('goto lobby',function(data){
+    localStorage.setItem("room", data.roomId);
+    window.location.href="/game#"+data.roomId
   });
 
   function displayUserInfo(username) {
@@ -82,7 +92,6 @@ $(function() {
       window.location.href = 'http://www.bbc.co.uk';
     });
   }
-});
 //Joining a public lobby or creating a public lobby
 $('#joinPublicBtn').click(function(e) {
   e.preventDefault()
@@ -93,4 +102,5 @@ $('#joinPublicBtn').click(function(e) {
 $('#createCustomBtn').click(function(e) {
   e.preventDefault()
   socket.emit('create room', 'private')
+});
 });
