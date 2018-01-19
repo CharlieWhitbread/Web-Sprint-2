@@ -6,13 +6,15 @@ var io = require('socket.io').listen(server);
 var $ = require('jquery');
 
 class Lobby {
-  constructor(roomId, players) {
+  constructor(roomId, players, type, maxPlayers) {
     this.roomId = roomId;
     this.players = players;
+    this.maxPlayers = maxPlayers;
+    this.type = type;
   }
 }
 
-
+defaultLobbyMax = 3;
 lobbies = [];
 loggedInUsers = [];
 connections = [];
@@ -45,11 +47,11 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
-  socket.on('log out', function(data){
+  socket.on('log out', function(data) {
     //if you logout you remove yourself from users list but remain a connection
     console.log(socket.username + " logged out!");
-    loggedInUsers.splice(loggedInUsers.indexOf(socket.username),1);
-    socket.emit("revert login",socket.username);
+    loggedInUsers.splice(loggedInUsers.indexOf(socket.username), 1);
+    socket.emit("revert login", socket.username);
   });
 
   //Login user
@@ -85,10 +87,9 @@ io.sockets.on('connection', function(socket) {
   });
 
   //Changes first charecter uppercase gGj -> Ggj
-  function jsUcfirst(string)
-  {
-      var lowcasestring = string.toLowerCase();
-      return lowcasestring.charAt(0).toUpperCase() + lowcasestring.slice(1);
+  function jsUcfirst(string) {
+    var lowcasestring = string.toLowerCase();
+    return lowcasestring.charAt(0).toUpperCase() + lowcasestring.slice(1);
   }
 
   //Create guest name
@@ -103,77 +104,154 @@ io.sockets.on('connection', function(socket) {
   }
   //Creating the lobby for either public or private
   socket.on('play button', function() {
-    randId = Math.floor(Math.random()*100000+1)
-    var newLobby = new Lobby(randId,[socket.username]);
-    lobbies.push(newLobby);
-    console.log("play!");
 
-    socket.emit('goto lobby',newLobby);
+    var roomFound = false;
+    //for each lobby
+    for (var i = 0; i < lobbies.length; i++) {
+      //if a public lobby exists and its free to join
+      if (lobbies[i].type == "public" && lobbies[i].players.length < lobbies[i].maxPlayers) {
+        //goto that lobby
+        socket.emit('goto lobby', lobbies[i]);
+        roomFound = true;
+        //add you to the room
+        lobbies[i].players.push(socket.username);
+      }
+    }
+    //if we havn't found a lobby
+    if (!roomFound) {
+      console.log("No lobby found...Creating one...")
+      randId = Math.floor(Math.random() * 100000 + 1)
+      var newLobby = new Lobby(randId, [socket.username], "public", defaultLobbyMax);
+      lobbies.push(newLobby);
+      socket.emit('goto lobby', newLobby);
+    }
+
   });
 
   function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key))
+        return false;
     }
     return true;
-}
+  }
 
-socket.on('join custom', (data) =>{
-  socket.join(data);
-  var targetLobby = getLobbyByID(data);
-  socket.emit('goto lobby',targetLobby);
-  lobbies[0].players.push(socket.username);
-  console.log(lobbies[0]);
-  games.in(data).emit('get users',getLobbyByID(data).players);
+
+
+  socket.on('join custom', (data) => {
+    socket.join(data);
+    var targetLobby = getLobbyByID(data);
+    socket.emit('goto lobby', targetLobby);
+
+
+    //// THIS WORKS
+    for (var i = 0; i < lobbies.length; i++) {
+      if (lobbies[i].roomId == data) {
+        lobbies[i].players.push(socket.username);
+      }
+    }
+
+
+    games.in(data).emit('get users', getLobbyByID(data).players);
+  });
+
+  socket.on('create custom', (data) => {
+    randId = Math.floor(Math.random() * 100000 + 1)
+    var newLobby = new Lobby(randId, [socket.username], "private", defaultLobbyMax);
+    lobbies.push(newLobby);
+    socket.emit('goto lobby', newLobby);
+  });
+
+
 });
 
-function getLobbyByID(data){
+function getLobbyByID(data) {
   for (var i = 0; i <= lobbies.length; i++) {
-  if (lobbies[i].roomId == data) {
-    return lobbies[i];
-  } else {
-    console.log("can't find lobby");
+    if (lobbies[i].roomId == data) {
+      return lobbies[i];
+    } else {
+      console.log("can't find lobby");
+    }
   }
 }
-}
-});
 
-function getLobbyByID(data){
-  for (var i = 0; i <= lobbies.length; i++) {
-  if (lobbies[i].roomId == data) {
-    return lobbies[i];
-  } else {
-    console.log("can't find lobby");
-  }
-}
-}
+//takes in roomId
 
 // Game System
-games.on('connection',(socket) => {
-  socket.on('join', (data) =>{
-    console.log(data.user);
+games.on('connection', (socket) => {
+  socket.on('join', (data) => {
     socket.join(data.room);
     socket.username = data.user;
-    socket.myRoomID =data.room;
-    console.log(socket.rooms);
+    socket.myRoomID = data.room;
     //get index of my socket in my room
-    //use the index lobbies[data.room].players
-    games.in(data.room).emit('message', `New ${data.user} has joined ${data.room} room!`);
 
-    //refreshes all user lists in rooms
-    games.in(data.room).emit('get users',getLobbyByID(data.room).players);
-    console.log(data.room)
-  })
-  socket.on('disconnect', (data) =>{
-    socket.leave(data);
-    console.log(socket.rooms);
-  });
-    socket.on('send message',(data) =>{
-      console.log(data);
-      console.log(socket.username);
-      console.log(socket.myRoomID);
-      games.in(socket.myRoomID).emit('new message',{msg:data, user:socket.username});
+
+    //when you join a room - emit message letting people know you've joined.
+    games.in(socket.myRoomID).emit('new message', {
+      msg: socket.username + " has joined the room",
+      user: "Announcer"
     });
 
-})
+    //refreshes all user lists in rooms
+    console.log(socket.username + " is joining room " + data.room);
+
+    //When you join a lobby emit to all rooms
+    if(socket.username != null){
+    games.in(data.room).emit('get users', getLobbyByID(data.room).players);
+  }else{
+    socket.emit('kick', 'invalid name');
+  }
+  })
+  socket.on('disconnect', (data) => {
+
+
+    //remove name from lobby
+    //// THIS WORKS
+    for (var i = 0; i < lobbies.length; i++) {
+      if (lobbies[i].roomId == socket.myRoomID) {
+        const index = lobbies[i].players.indexOf(socket.username);
+        //removes you from lobby list
+        lobbies[i].players.splice(index, 1);
+
+        //announces player has left the room
+        games.in(socket.myRoomID).emit('get users', getLobbyByID(socket.myRoomID).players);
+
+        games.in(socket.myRoomID).emit('new message', {
+          msg: socket.username + " has left the room",
+          user: "Announcer"
+        });
+
+        //only removes you from the room if you're actually in a room...
+        socket.leave(data);
+
+        //if last person in the lobby delete the object
+        if (lobbies[i].players.length == 0) {
+          //find your lobby
+          var lobbyIndex = lobbies.indexOf(lobbies[i]);
+          //delete it from lobbylists
+          lobbies.splice(lobbyIndex, 1);
+        }
+      }
+    }
+
+
+
+  });
+  socket.on('send message', (data) => {
+    games.in(socket.myRoomID).emit('new message', {
+      msg: data,
+      user: socket.username
+    });
+
+
+  });
+
+  socket.on('kick user',(data) => {
+        //announces kick
+        games.in(socket.myRoomID).emit('new message', {
+          msg: socket.username + " has been kicked",
+          user: "Announcer"
+        });
+      games.in(socket.myRoomID).emit('kick', data);
+});
+});

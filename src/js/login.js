@@ -9,6 +9,7 @@ $(function() {
   var $playerStats = $('#playerStats');
   var $loginControl = $('#loginControl');
   var $loggedIn = $('#loggedIn');
+  var $joinLobbyForm = $('#joinLobbyForm');
 
   $userForm.submit(function(e) {
     e.preventDefault();
@@ -22,6 +23,15 @@ $(function() {
       }
     });
   });
+
+  $joinLobbyForm.submit(function(e) {
+    e.preventDefault();
+    //if they want to join a custom lobbylobby
+      var customlobbyInput = $('#customLobbyURL').val();
+      console.log("attempting to join:"+ customlobbyInput);
+      socket.emit('join custom',customlobbyInput);
+  });
+  
 //login as Guest
   $('#guestBtn').click(function(e) {
     e.preventDefault();
@@ -34,14 +44,6 @@ $(function() {
     // send username and create room id to the server
     // store the values
     // redirect and access them values from the server
-  });
-
-  //if they want to join a custom lobbylobby
-  $('#joinCustomBtn').click(function(e) {
-    e.preventDefault
-    var customlobbyInput = $('#customLobbyURL').val();
-    console.log("attempting to join:"+ customlobbyInput);
-    socket.emit('join custom',customlobbyInput);
   });
 
   //create custom lobby

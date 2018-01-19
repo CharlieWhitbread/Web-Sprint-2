@@ -34,23 +34,25 @@ h3 {
 #playerStats{
   height: 158;
 }
-#JoinCustomBtn, #createCustomBtn {
+#shopBtn, #createCustomBtn {
 border-bottom-right-radius: 0px;
 border-bottom-left-radius: 0px;
 width:50%;
 }
 
 #customLobbyURL{
-  width: 50%;
+  width: 49.8%;
   display:inline;
   float:left;
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
   border-top-left-radius: 0px;
 }
-#shopBtn{
+#joinCustomBtn{
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
   border-top-right-radius: 0px;
-  width:49.8%;
+  width:50%%;
 }
 
 #playButton{

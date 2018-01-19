@@ -37,12 +37,14 @@
             <br/>
             <br/>
             <div class="btn-group">
-            <input type="button" id="joinCustomBtn" class="btn btn-primary uiBtn" value="Join Private Lobby" disabled></input>
+            <input type="button" id="shopBtn" class="btn btn-warning uiBtn" value="Shop" disabled></input>
             <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby" disabled></input>
           </div>
           <div class="btn-group">
-            <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID" disabled></input>
-            <input type="button" id="shopBtn" class="btn btn-warning uiBtn" value="Shop" disabled></input>
+            <form id="joinLobbyForm">
+              <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID" disabled required></input>
+              <input type="submit" id="joinCustomBtn" class="btn btn-primary uiBtn" value="Join Lobby" disabled></input>
+            </form>
           </div>
           <br/>
           <div>

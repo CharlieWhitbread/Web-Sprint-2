@@ -2,9 +2,10 @@ body{
   margin-top: 30px;
   background-color: #ADD8E6;
 }
-#onlineUsers h3{
+#onlineUsers h3, h4{
   text-align: center;
 }
+
 #hostControls h3{
   text-align: center;
 }
@@ -18,16 +19,24 @@ body{
   display: flex;
   justify-content: space-between;
 }
+
+#messageForm{
+  padding: 0px;
+  position: initial;
+  margin-top: 10px;
+}
 .well{
 }
 #chat{
-  max-height: 380;
+  min-height: 350px;
+  max-height: 350px;
   overflow-y: scroll;
 }
 #otherMessage, #userMessage, #serverMessage{
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
+  margin: 0px;
 }
 #userMessage{
   text-align: right;
@@ -39,6 +48,16 @@ body{
 }
 #message{
   resize: none;
+}
+
+#kickUserList{
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+
+#kick{
+  border-bottom-right-radius:0px;
+  border-top-right-radius:0px;
 }
 #kickControls{
     display: flex;

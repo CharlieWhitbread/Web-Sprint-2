@@ -28,7 +28,7 @@ socket.on('get users', function(data) {
         if (hostControlsDrawn == false) {
           $hostControls.append('<h3>Host Controls</h3><div id="buttonControls"><button id="go" type="button" class="btn btn-primary">Go</button><div id="kickControls"><button id="kick" type="button" class="btn btn-warning">Kick</button><select class="form-control" id="kickUserList"></select></div><select class="form-control" id="roundTimeInput"><option>Animals</option><option>Cities</option><option>Vehicles</option><option>Food</option></select></div>');
         }
-        //refreshKickList();
+        refreshKickList(data);
 
         html += '<li class="list-group-item host"><img src="src/img/playerIcon.png" height="25" width="25"><img src="src/img/hostIcon.png" height="25" width="25"></img><b>' + data[i] + '</b></li>';
       } else {
@@ -72,13 +72,43 @@ $messageForm.submit(function(e) {
     $message.val('');
 });
 
+socket.on('kick', (data) => {
+  // if i'm being kicked
+  if(data==myUsername || data=='invalid name')
+  {
+    window.location.href = "http://localhost:3000"
+  }
+})
+
 //new message from the server
 socket.on('new message', function(data) {
   console.log(data);
+  //if its my message - align right
   if(data.user == myUsername){
       $chat.append('<div id="userMessage" class="well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
     }
+    //if its the Announcer, in the middle
+    else if (data.user == "Announcer") {
+      $chat.append('<div id="serverMessage" class="well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
+    }
+    //if its somone else
     else{
       $chat.append('<div id="otherMessage" class="well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
     }
 });
+
+function refreshKickList(data){
+  var sel = document.getElementById('kickUserList');
+  sel.innerHTML = '';
+  var fragment = document.createDocumentFragment();
+
+  data.forEach(function(user, index) {
+    if(index!=0){
+      var opt = document.createElement('option');
+      opt.innerHTML = user;
+      opt.value = user;
+      fragment.appendChild(opt);
+    }
+  });
+    sel.appendChild(fragment);
+}
