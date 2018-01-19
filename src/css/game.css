@@ -1,85 +1,114 @@
-body{
+body {
   margin-top: 30px;
   background-color: #ADD8E6;
 }
-#onlineUsers h3, h4{
+
+#onlineUsers h3, h4, #hostControls h3 {
   text-align: center;
 }
 
-#hostControls h3{
-  text-align: center;
-}
-#wordDisplay{
-  text-align: center;
-}
-#wordDisplay h1{
-  color:red;
-}
-#buttonControls{
+#buttonControls {
   display: flex;
   justify-content: space-between;
 }
+ #kickControls{
+   display:flex;
+   justify-content: space-between;
+ }
 
-#messageForm{
+#messageForm {
   padding: 0px;
   position: initial;
   margin-top: 10px;
 }
-.well{
-}
-#chat{
-  min-height: 350px;
+
+#chat {
   max-height: 350px;
   overflow-y: scroll;
 }
-#otherMessage, #userMessage, #serverMessage{
+
+#otherMessage, #userMessage, #serverMessage {
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
   margin: 0px;
 }
-#userMessage{
+
+#userMessage {
   text-align: right;
-  color:blue;
+  color: blue;
 }
-#serverMessage{
-  color:red;
-  text-align:center;
+
+#serverMessage {
+  color: red;
+  text-align: center;
 }
-#message{
+
+#message ,#gameMessage{
   resize: none;
 }
 
-#kickUserList{
+#kickUserList {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
 }
 
-#kick{
-  border-bottom-right-radius:0px;
-  border-top-right-radius:0px;
-}
-#kickControls{
-    display: flex;
-    justify-content: space-between;
-}
-#roundTimeInput{
-  width: 100px;
+#kick {
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
 }
 
-.host, .player{
+.host, .player {
   text-align: right;
   font-size: 20px;
-  height:50px;
+  height: 50px;
 }
 
-.host{
-  color:red;
-}
-.host img, .player img{
-  float:left;
+.host {
+  color: red;
 }
 
-.player{
-  color:blue;
+.host img, .player img {
+  float: left;
+}
+
+.topBarElement {
+  width: 33%;
+}
+
+#topBarDisplay, #gameChatControls {
+  display: flex;
+}
+
+#previousImageGuess {
+  text-align: left;
+}
+
+#roundTimer {
+  text-align: center;
+  color: green;
+}
+
+#roundNumber {
+  text-align: right;
+}
+
+.player {
+  color: blue;
+}
+
+#gameChat {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+#canvas, #drawingPlaceholder {
+  border: 1px solid black;
+  width: 100%;
+  padding-bottom: 4%;
+  background-color: green;
+}
+
+#drawingPlaceholder {
+  padding-bottom: 50%;
 }

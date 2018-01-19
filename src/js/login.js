@@ -4,7 +4,7 @@ var myRoomID;
 $(function() {
   var socket = io.connect();
   var $username = $('#username');
-  var $customLobbyURL=$('#customLobbyURL');
+  var $customLobbyURL = $('#customLobbyURL');
   var $userForm = $('#userForm');
   var $playerStats = $('#playerStats');
   var $loginControl = $('#loginControl');
@@ -27,12 +27,11 @@ $(function() {
   $joinLobbyForm.submit(function(e) {
     e.preventDefault();
     //if they want to join a custom lobbylobby
-      var customlobbyInput = $('#customLobbyURL').val();
-      console.log("attempting to join:"+ customlobbyInput);
-      socket.emit('join custom',customlobbyInput);
+    var customlobbyInput = $('#customLobbyURL').val();
+    console.log("attempting to join:" + customlobbyInput);
+    socket.emit('join custom', customlobbyInput);
   });
-  
-//login as Guest
+
   $('#guestBtn').click(function(e) {
     e.preventDefault();
     socket.emit('login guest');
@@ -41,12 +40,8 @@ $(function() {
   $('#playButton').click(function(e) {
     e.preventDefault();
     socket.emit('play button');
-    // send username and create room id to the server
-    // store the values
-    // redirect and access them values from the server
   });
 
-  //create custom lobby
   $('#createCustomBtn').click(function(e) {
     e.preventDefault
     socket.emit('create custom');
@@ -62,7 +57,6 @@ $(function() {
     $('#lobbyInfo').find('*').removeAttr('disabled');
   });
 
-  //if someone logs out
   socket.on('revert login', function(data) {
     $userForm.show();
     $loggedIn.hide();
@@ -70,9 +64,9 @@ $(function() {
     $('#lobbyInfo').find('*').attr('disabled', true);
   });
 
-  socket.on('goto lobby',function(data){
+  socket.on('goto lobby', function(data) {
     localStorage.setItem("room", data.roomId);
-    window.location.href="/game#"+data.roomId
+    window.location.href = "/game";
   });
 
   function displayUserInfo(username) {
@@ -86,7 +80,7 @@ $(function() {
     //events have to be after append
     $('#logoutBtn').click(function(e) {
       e.preventDefault()
-      socket.emit('log out',myUsername);
+      socket.emit('log out', myUsername);
     });
 
     $('#leaderboardBtn').click(function(e) {
@@ -94,15 +88,13 @@ $(function() {
       window.location.href = 'http://www.bbc.co.uk';
     });
   }
-//Joining a public lobby or creating a public lobby
-$('#joinPublicBtn').click(function(e) {
-  e.preventDefault()
-  socket.emit('create room', 'public')
-});
+  $('#joinPublicBtn').click(function(e) {
+    e.preventDefault()
+    socket.emit('create room', 'public')
+  });
 
-//Creating a private lobby
-$('#createCustomBtn').click(function(e) {
-  e.preventDefault()
-  socket.emit('create room', 'private')
-});
+  $('#createCustomBtn').click(function(e) {
+    e.preventDefault()
+    socket.emit('create room', 'private')
+  });
 });

@@ -1,7 +1,6 @@
 <html>
-
 <head>
-  <title>Main Menu</title>
+  <title>Depiction - Login</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="src/css/login.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -33,31 +32,44 @@
             </div>
           </div>
           <div id="lobbyInfo" class="well">
-              <input type="button" id="playButton" class="btn btn-success uiBtn" value="Play!" disabled></input>
+            <input type="button" id="playButton" class="btn btn-success uiBtn" value="Play!" disabled></input>
             <br/>
             <br/>
             <div class="btn-group">
-            <input type="button" id="shopBtn" class="btn btn-warning uiBtn" value="Shop" disabled></input>
-            <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby" disabled></input>
+              <input type="button" id="shopBtn" class="btn btn-warning uiBtn" value="Shop" disabled></input>
+              <input type="button" id="createCustomBtn" class="btn btn-primary uiBtn" value="Create Private Lobby" disabled></input>
+            </div>
+            <div class="btn-group">
+              <form id="joinLobbyForm">
+                <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID" disabled required></input>
+                <input type="submit" id="joinCustomBtn" class="btn btn-primary uiBtn" value="Join Lobby" disabled></input>
+              </form>
+            </div>
+            <br/>
+            <div>
+            </div>
           </div>
-          <div class="btn-group">
-            <form id="joinLobbyForm">
-              <input class="form-control" id="customLobbyURL" placeholder="Enter Lobby ID" disabled required></input>
-              <input type="submit" id="joinCustomBtn" class="btn btn-primary uiBtn" value="Join Lobby" disabled></input>
-            </form>
-          </div>
-          <br/>
-          <div>
-          </div>
-        </div>
         </div>
         <div class="col-md-6">
           <div id="gameInfo" class="well">
             <h3>Welcome to Depiction</h3>
             <div id="gameDetails">
               <p>Play with your friends or random people, test your drawing skills, humour and quick whit in this Chinese-whispers meets Pictionary bonanza! </p>
+              <b>Futrue Updates</b>
+              <p>Fully working Game System
+                <br/>Account Progression
+                <br/>Login Systems with accounts
+              </p>
+              <b>V.1.4</b>
+              <p>Game System: Implementing the game mechanics, finding bugs on the way :)</p>
+              <b>V.1.3</b>
+              <p>Advanced Lobby System: Added more advanced features such as host controls</p>
+              <b>V.1.2</b>
+              <p>Lobby Rooms: Added the feature to allow multiple rooms with multiple games to run simultaneously</p>
+              <b>V.1.1</b>
+              <p>Lobby System: Added the features to allow you to create a lobby or join a lobby </p>
               <b>V.1.0</b>
-              <p>Lobby System and main menu</p>
+              <p>Main Menu System: Added the features to allow creation of accounts</p>
             </div>
             <div id="myCarousel" class="carousel slide" data-ride="carousel">
               <div class="carousel-inner">
@@ -78,5 +90,4 @@
     </div>
   </div>
 </body>
-
 </html>
