@@ -12,9 +12,28 @@ class Lobby {
     this.maxPlayers = maxPlayers;
     this.type = type;
     this.inGame = false;
+    this.rounds = [];
   }
 }
-defaultLobbyMax = 3;
+
+class gameRound{
+    constructor(roundNumber,listOfGoes) {
+      this.roundNumber = roundNumber;
+      this.listOfGoes = listOfGoes;
+    }
+}
+
+class userPair{
+    constructor(player1, player2) {
+      this.player1 = player1;
+      this.player2 = player2;
+    }
+}
+
+
+
+
+defaultLobbyMax = 5;
 lobbies = [];
 loggedInUsers = [];
 connections = [];
@@ -216,11 +235,125 @@ games.on('connection', (socket) => {
   //Game not the lobby no more
   socket.on('ready', () => {
     console.log(socket.myRoomID +"has Started their game.");
+    var rounds;
     for (var i = 0; i < lobbies.length; i++) {
       if (lobbies[i].roomId == socket.myRoomID) {
+        //gets randomised rounds
+        var rounds = generateRounds(lobbies[i].players)
         lobbies[i].inGame = true;
+        socket.numberOfRounds = (lobbies[i].players.length-1)
       }
     }
     games.in(socket.myRoomID).emit('start game');
+    initiateRounds(rounds);
   });
+
+//gives a starting word
+  socket.on('request word', () =>{
+    var names = Moniker.generator([Moniker.adjective]);
+    var word = names.choose();
+        console.log(socket.username+"'s word is: "+word);
+    socket.emit('receive word',word);
+  });
+
+  socket.on('next round', () =>{
+    socket.emit('kick',socket.username);
+  });
+
+  //user to randomise the order of players
+  function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+
+
+  // test function to make sure the rounds are generating properly
+  function initiateRounds(rounds)
+  {
+    console.log("Cycling Rounds...");
+    console.log(getRoundFromRounds(1,rounds).listOfGoes)
+    for (var i = 1; i <= socket.numberOfRounds; i++) {
+      console.log("---Round: "+i)
+      console.log("---Goes---")
+      //for each go in each round
+      var round = getRoundFromRounds(i,rounds)
+      for (var j = 0; j < round.listOfGoes.length; j++) {
+        console.log(round.listOfGoes[j].player1+" is Guesing "+round.listOfGoes[j].player2)
+      }
+
+
+      //switch lobby evert 8 seconds
+      // setTimeout(function(){ games.in(socket.myRoomID).emit('goto round',round);}, 5000*i);
+
+
+    }
+
+
+    games.in(socket.myRoomID).emit('goto round',getRoundFromRounds(1,rounds));
+    console.log(getRoundFromRounds(1,rounds));
+
+    //   //passes in the round number,the goes fo
+    //   setTimeout(() => { games.in(socket.myRoomID).emit('new round',rounds.indexOf(rounds[i])+1,rounds[i]); }, 3000*(i+1));
+    //
+    //   // games.in(socket.myRoomID).emit('new round',rounds[i]);
+    // }
+  }
+
+
+  function getRoundFromRounds(roundNumber,rounds)
+  {
+    var listOfGoes =[];
+    //for each person
+    for (var i = 0; i < rounds.length; i++) {
+      //extract the data and add to lists
+      if(rounds[i].roundNumber == roundNumber)
+      {
+        listOfGoes.push(rounds[i].pair);
+      }
+    }
+     return new gameRound(roundNumber,listOfGoes);
+  }
+
+// get a specific list of pairs from a given round
+  //gets list of rounds from a list of users
+  function generateRounds(originList){
+    var data = shuffle(originList)
+    console.log("Creating rounds for " +data);
+    var appendedList = data.concat(data);
+    console.log(appendedList);
+    //form
+    var roundList = [];
+    //for each player
+    for (var i = 0; i < data.length; i++) {
+      console.log("Creating moves for: "+ data[i]);
+      //for each player loop again through the players pairing users together
+      for (var j = 0; j < (data.length -1); j++) {
+        //gets currentIndex
+        var myIndex = data.indexOf(data[i])+1;
+        //matching
+        console.log("Matching "+data[i]+"with "+appendedList[j+myIndex]);
+        var pair = new userPair(data[i],appendedList[j+myIndex]);
+        //add it to the array of moves for the player
+        var roundnum = j+1
+        var test = {roundNumber:roundnum,pair:pair}
+        roundList.push(test);
+      }
+    }
+    return roundList;
+  }
+
+
 });

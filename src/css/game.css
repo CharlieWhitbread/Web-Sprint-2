@@ -1,10 +1,16 @@
 body {
   margin-top: 30px;
-  background-color: #ADD8E6;
+  background-color: #dff3fa;
 }
+.well{
+  border: 1px solid #000000;
+}
+
+
 
 #onlineUsers h3, h4, #hostControls h3 {
   text-align: center;
+  margin-top: 0px;
 }
 
 #buttonControls {
@@ -31,7 +37,21 @@ body {
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
-  margin: 0px;
+  overflow-y: auto;
+  background-color: white;
+}
+
+.list-group-item{
+  border:1px solid #000000;
+  margin:4px;
+  overflow-y: auto;
+}
+.form-control{
+  border:1px solid #000000;
+}
+
+#gameChatArea{
+  max-height: 273;
 }
 
 #userMessage {
@@ -78,7 +98,30 @@ body {
 
 #topBarDisplay, #gameChatControls {
   display: flex;
+
 }
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+body {
+  -ms-overflow-style:none;
+}
+
+#gameChatControls, #chatbox {
+  border: 1px solid #000000;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+
+
+
 
 #previousImageGuess {
   text-align: left;
@@ -98,7 +141,7 @@ body {
 }
 
 #gameChat {
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: scroll;
 }
 

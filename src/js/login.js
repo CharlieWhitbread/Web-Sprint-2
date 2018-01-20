@@ -11,6 +11,10 @@ $(function() {
   var $loggedIn = $('#loggedIn');
   var $joinLobbyForm = $('#joinLobbyForm');
 
+  $(function(){
+
+
+});
   $userForm.submit(function(e) {
     e.preventDefault();
     socket.emit('islogged in', $username.val(), function(data) {
@@ -74,8 +78,9 @@ $(function() {
     $loggedIn.append('<h3>Welcome ' + username + '</h3>');
     $loggedIn.append('<div id="playerStats"></div>');
     $loggedIn.append('<div class="btn-group">');
-    $loggedIn.append('<input type="button" class="btn btn-outline-danger uiBtn" id="leaderboardBtn" value="Leaderboard" />');
-    $loggedIn.append('<input type="button" class="btn btn-outline-warning uiBtn" id="logoutBtn" value="Logout" /></div>');
+
+    $loggedIn.append('<input type="button" class="btn btn-warning btn-outline uiBtn" id="leaderboardBtn" value="Leaderboard" />');
+    $loggedIn.append('<input type="button" class="btn btn-danger btn-outline uiBtn" id="logoutBtn" value="Logout" /></div>');
 
     //events have to be after append
     $('#logoutBtn').click(function(e) {

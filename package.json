@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "*",
     "jquery": "^3.2.1",
+    "jquery-slimscroll": "^1.3.8",
     "moniker": "^0.1.2",
     "random-words": "0.0.1",
     "socket.io": "*"
