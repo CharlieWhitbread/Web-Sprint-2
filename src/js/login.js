@@ -51,14 +51,18 @@ $(function() {
     socket.emit('create custom');
   });
 
-  socket.on('changelogin layout', function(data) {
+  socket.on('changelogin layout', function(data, type) {
     $userForm.hide();
     $loggedIn.show();
     myUsername = data;
     localStorage.setItem("username", myUsername);
     //This is to stop multiple appends on the stats elements
     displayUserInfo(myUsername);
+    if(type == "user"){
     $('#lobbyInfo').find('*').removeAttr('disabled');
+  }else{
+    $('#joinLobbyForm').find('*').removeAttr('disabled');
+  }
   });
 
   socket.on('revert login', function(data) {

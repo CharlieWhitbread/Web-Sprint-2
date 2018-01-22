@@ -13,6 +13,7 @@ class Lobby {
     this.type = type;
     this.inGame = false;
     this.rounds = [];
+    this.images = [];
   }
 }
 
@@ -70,13 +71,13 @@ io.sockets.on('connection', (socket) => {
     //Changes to uppercade and assigns to socket.username
     socket.username = jsUcfirst(data);
     loggedInUsers.push(socket.username);
-    changeLoginLayout();
+    changeLoginLayout("user");
   });
   //Login Guest
   socket.on('login guest', () => {
     socket.username = jsUcfirst(getNewGuestName());
     loggedInUsers.push(socket.username);
-    changeLoginLayout();
+    changeLoginLayout("guest");
   });
   //Is the user logged in already or someone has the same name
   socket.on('islogged in', (data, callback) => {
@@ -93,19 +94,15 @@ io.sockets.on('connection', (socket) => {
       callback(true);
     }
   });
-  //Changes first charecter uppercase gGj -> Ggj
-  function jsUcfirst(string) {
-    var lowcasestring = string.toLowerCase();
-    return lowcasestring.charAt(0).toUpperCase() + lowcasestring.slice(1);
-  }
+
   //Create guest name
   function getNewGuestName() {
     var users = Moniker.generator([Moniker.adjective]);
     return users.choose();
   }
   //Changes the login layout to show the user and stats
-  function changeLoginLayout() {
-    socket.emit("changelogin layout", socket.username);
+  function changeLoginLayout(type) {
+    socket.emit("changelogin layout", socket.username, type);
   }
   //Creating the lobby for either public or private
   socket.on('play button', () => {
@@ -163,6 +160,12 @@ function getLobbyByID(data) {
       return lobbies[i];
     }
   }
+}
+
+//Changes first charecter uppercase gGj -> Ggj
+function jsUcfirst(string) {
+  var lowcasestring = string.toLowerCase();
+  return lowcasestring.charAt(0).toUpperCase() + lowcasestring.slice(1);
 }
 /////////////////
 // Game System //
@@ -224,6 +227,16 @@ games.on('connection', (socket) => {
       user: socket.username
     });
   });
+
+  socket.on('countdown message', (data) => {
+    socket.emit('newingame message',{
+      msg: "Round begins in "+data+"...",
+      user: "Announcer"
+    });
+  });
+
+
+
   socket.on('kick user', (data) => {
     //announces kick
     games.in(socket.myRoomID).emit('new message', {
@@ -252,13 +265,12 @@ games.on('connection', (socket) => {
   socket.on('request word', () =>{
     var names = Moniker.generator([Moniker.adjective]);
     var word = names.choose();
-        console.log(socket.username+"'s word is: "+word);
-    socket.emit('receive word',word);
+    socket.emit('receive word',jsUcfirst(word));
   });
 
-  socket.on('next round', () =>{
-    socket.emit('kick',socket.username);
-  });
+  socket.on('next round', (data) =>{
+    socket.emit('goto round', getRoundFromRounds(data+1,getLobbyByID(socket.myRoomID).rounds));
+});
 
   //user to randomise the order of players
   function shuffle(array) {
@@ -283,34 +295,36 @@ games.on('connection', (socket) => {
   // test function to make sure the rounds are generating properly
   function initiateRounds(rounds)
   {
-    console.log("Cycling Rounds...");
-    console.log(getRoundFromRounds(1,rounds).listOfGoes)
+    //get my lobby
+    //update the rounds
+
+    //for each lobby
+    for (var i = 0; i < lobbies.length; i++) {
+      if(lobbies[i].roomId == socket.myRoomID)
+      {
+        //set the rounds
+        lobbies[i].rounds = rounds
+      }
+      {
+
     for (var i = 1; i <= socket.numberOfRounds; i++) {
-      console.log("---Round: "+i)
-      console.log("---Goes---")
       //for each go in each round
       var round = getRoundFromRounds(i,rounds)
       for (var j = 0; j < round.listOfGoes.length; j++) {
-        console.log(round.listOfGoes[j].player1+" is Guesing "+round.listOfGoes[j].player2)
       }
-
-
-      //switch lobby evert 8 seconds
-      // setTimeout(function(){ games.in(socket.myRoomID).emit('goto round',round);}, 5000*i);
-
 
     }
 
-
     games.in(socket.myRoomID).emit('goto round',getRoundFromRounds(1,rounds));
     console.log(getRoundFromRounds(1,rounds));
-
     //   //passes in the round number,the goes fo
     //   setTimeout(() => { games.in(socket.myRoomID).emit('new round',rounds.indexOf(rounds[i])+1,rounds[i]); }, 3000*(i+1));
     //
     //   // games.in(socket.myRoomID).emit('new round',rounds[i]);
     // }
   }
+}
+}
 
 
   function getRoundFromRounds(roundNumber,rounds)
@@ -331,20 +345,16 @@ games.on('connection', (socket) => {
   //gets list of rounds from a list of users
   function generateRounds(originList){
     var data = shuffle(originList)
-    console.log("Creating rounds for " +data);
     var appendedList = data.concat(data);
-    console.log(appendedList);
     //form
     var roundList = [];
     //for each player
     for (var i = 0; i < data.length; i++) {
-      console.log("Creating moves for: "+ data[i]);
       //for each player loop again through the players pairing users together
       for (var j = 0; j < (data.length -1); j++) {
         //gets currentIndex
         var myIndex = data.indexOf(data[i])+1;
         //matching
-        console.log("Matching "+data[i]+"with "+appendedList[j+myIndex]);
         var pair = new userPair(data[i],appendedList[j+myIndex]);
         //add it to the array of moves for the player
         var roundnum = j+1
@@ -355,5 +365,43 @@ games.on('connection', (socket) => {
     return roundList;
   }
 
+socket.on('save image', (data) => {
+  for (var i = 0; i < lobbies.length ; i++) {
+    if(lobbies[i].roomId == socket.myRoomID){
+      lobbies[i].images.push(data);
+    }
+  }
+});
+
+socket.on('getimage forplayer', (data) =>{
+var imageUrl = getImageFromRoundNumber(data);
+socket.emit('receive image',imageUrl);
+});
+
+function getImageFromRoundNumber(data){
+var lobbyObj = getLobbyByID(socket.myRoomID);
+var roundObj = getRoundFromRounds(data, lobbyObj.rounds);
+var drawingToGuessPlayer = getImageByAuthor(roundObj.listOfGoes);
+var imageUrl = getImageForPlayer(drawingToGuessPlayer, lobbyObj.images, data);
+return imageUrl;
+}
+
+function getImageByAuthor(data){
+for (var i = 0; i < data.length; i++) {
+  if(data[i].player2 == socket.username){
+    return data[i].player1;
+  }
+}
+}
+
+function getImageForPlayer(playerToSearch, images, roundNumber){
+  for (var i = 0; i < images.length; i++) {
+    if(images[i].roundNumber == roundNumber){
+      if(images[i].author == playerToSearch){
+        return images[i].imageUrl;
+      }
+    }
+  }
+}
 
 });

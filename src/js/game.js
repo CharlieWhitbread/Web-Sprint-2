@@ -1,5 +1,8 @@
 myRoomID = localStorage.getItem('room');
 myUsername = localStorage.getItem('username');
+currentRound = 0;
+localStorage.clear();
+
 hostControlsDrawn = false;
 $users = $('#users');
 $hostControls = $('#hostControls');
@@ -18,13 +21,10 @@ $roundNumber = $('#roundNumber');
 
 
 function scrollToBottom(data) {
-  console.log("scroll");
   const messages = document.getElementById(data);
   messages.scrollTop = messages.scrollHeight;
 }
 
-
-localStorage.clear();
 const socket = io('/games');
 socket.on('connect', () => {
   socket.emit('join', {
@@ -35,7 +35,6 @@ socket.on('connect', () => {
 })
 socket.on('get users', function(data) {
   $numberOfPlayerDisplay.html('Players in lobby: <strong>' + data.length + '</strong>');
-  console.log(data);
   var html = '';
 
   if(myUsername != data[0]){
@@ -76,15 +75,12 @@ socket.on('get users', function(data) {
         html += '<li class="list-group-item player">' + data[i] + '</li>';
       }
     }
-    console.log("who am i: " + myUsername);
   }
   $users.html(html);
 });
 socket.on('disconnect', () => {
   // emiting to everybody
   socket.emit('disconnect', myRoomID);
-  console.log(myUsername);
-  console.log(myRoomID);
   socket.emit('refresh users');
 })
 //sending messages
@@ -107,7 +103,6 @@ socket.on('kick', (data) => {
 })
 //new message from the server
 socket.on('new message', function(data) {
-  console.log(data);
   switch(data.user){
     case myUsername:
       $chat.append('<div id="userMessage" class="well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
@@ -123,7 +118,6 @@ socket.on('new message', function(data) {
 });
 //new message from the server
 socket.on('newingame message', function(data) {
-  console.log(data);
   //if its my message - align right
   switch(data.user){
     case myUsername:
@@ -152,7 +146,7 @@ function refreshKickList(data) {
     });
     sel.appendChild(fragment);
 
-  if(data.length >= 3){
+  if(data.length >= 1){
   $('#hostControls').find('*').removeAttr('disabled');
 }else if(data.length > 1){
   $('#hostControls').find('*').attr('disabled', true);
@@ -163,32 +157,76 @@ function refreshKickList(data) {
 }
 
 socket.on('receive word', (data) =>{
-  var previousImageGuess = document.getElementById('previousImageGuess');
-  previousImageGuess.innerHTML = '';
-  previousImageGuess.innerHTML = 'Your word is: '+data;
-
+  var drawingPlaceholder = document.getElementById('drawingPlaceholder');
+  drawingPlaceholder.innerHTML = '';
+  drawingPlaceholder.innerHTML = "<h3>"+'Your word is:</h3><h2>'+data+"</h2>";
 });
 
 function gameStartup(){
   socket.emit('request word');
+  roundStartUp();
   startRoundTimer();
 }
 
+function normalRound(){
+  roundStartUp();
+
+  startRoundTimer();
+
+  // this is where drawing infomation will be sent
+}
+function roundStartUp(){
+  clearArea();
+}
+
+function getGuessImage(){
+  socket.emit('getimage forplayer',currentRound - 1);
+}
+
 function startRoundTimer(){
-  var count=10;
+  var defaultRoundTimer = 20;
+  var defaultCountdownTimer = 10;
+
+  var count= defaultRoundTimer+ defaultCountdownTimer;
   var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
   function timer()
   {
-    count=count-1;
+
     if (count <= 0)
     {
        clearInterval(counter);
+       save();
        //counter ended, do something here
-       socket.emit("next round");
+       socket.emit("next round", currentRound);
        return;
     }
 
-   document.getElementById("roundTimer").innerHTML=count + "s"; // watch for spelling
+    if(count == defaultRoundTimer+defaultCountdownTimer){
+      //countdown start
+      drawing = false;
+    }
+    //when round starts
+    else if(count == defaultRoundTimer){
+        document.getElementById("roundTimer").innerHTML="GO!";
+        InitThis();
+        drawing = true;
+    }
+    else if(count>defaultRoundTimer)
+    {
+      if(count == defaultRoundTimer+8 && currentRound != 1){
+               getGuessImage();
+      }
+       document.getElementById("roundTimer").innerHTML= "round starting in  " + (count-defaultRoundTimer)
+       socket.emit('countdown message', count-defaultRoundTimer);
+    }
+    else if(count>10){
+       document.getElementById("roundTimer").style.color = "green";
+       document.getElementById("roundTimer").innerHTML=count + "s";
+    }else{
+      document.getElementById("roundTimer").style.color = "red";
+      document.getElementById("roundTimer").innerHTML=count + "s";
+    }
+   count=count - 1;
     //Do code for showing the number of seconds here
   }
 
@@ -205,14 +243,22 @@ socket.on('start game', () => {
 
 socket.on('goto round', (pairs) => {
   // starting the game
-  console.log(pairs.roundNumber)
+  currentRound = pairs.roundNumber;
   var roundNumDisplay = document.getElementById('roundNumber');
   roundNumDisplay.innerHTML = '';
   var numberOfRounds = (pairs.listOfGoes.length)-1;
   roundNumDisplay.innerHTML = 'Round Number: '+pairs.roundNumber+"/"+numberOfRounds
   //if its the first round we need to setup some game elements (get word etc..)
-  if(pairs.roundNumber==1){
-    gameStartup();
-  }
 
+  if(pairs.roundNumber == (numberOfRounds+1) || (numberOfRounds == -1) ){
+    $gameArea.hide();
+    //final guess and display drawings
+  }else if (currentRound == 1){
+    gameStartup();
+  }else{
+    normalRound();
+  }
+  socket.on('receive image', (data) =>{
+    displayImage(data);
+  });
 })

@@ -32,9 +32,7 @@
   <div id="gameArea" class="row" hidden>
     <div id="leftSide" class="col-md-3">
       <div id="drawingDisplay" class="well">
-        <div id="drawingPlaceholder">
-        previous drawing goes here
-      </div>
+        <div id="drawingPlaceholder"></div>
       </div>
       <form id="inGameChat">
         <div class="form-group" id="gameChatControls">
@@ -49,11 +47,11 @@
     <div id="rightSide" class="col-md-9">
       <div id="topBarDisplay" class="well">
         <div id="previousImageGuess" class="topBarElement"></div>
-        <div id="roundTimer" class="topBarElement">10s</div>
+        <div id="roundTimer" class="topBarElement"></div>
         <div id="roundNumber" class="topBarElement"></div>
       </div>
       <div id="drawingArea" class="well">
-        <canvas id="canvas"></canvas>
+        <canvas id="myCanvas" width="800px" height="450px" style="border:2px solid black"></canvas>
       </div>
     </div>
   </div>
@@ -65,4 +63,5 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="/src/js/login.js"></script>
   <script src="/src/js/game.js"></script>
+  <script src="/src/js/canvas.js"></script>
 </html>

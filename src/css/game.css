@@ -51,7 +51,6 @@ body {
 }
 
 #gameChatArea{
-  max-height: 273;
 }
 
 #userMessage {
@@ -141,17 +140,27 @@ body {
 }
 
 #gameChat {
-  max-height: 250px;
+  max-height: 268px;
   overflow-y: scroll;
 }
 
-#canvas, #drawingPlaceholder {
-  border: 1px solid black;
+#leftsideDrawing{
   width: 100%;
-  padding-bottom: 4%;
-  background-color: green;
+  height: 124px;
 }
 
 #drawingPlaceholder {
-  padding-bottom: 50%;
+  border: 1px solid black;
+  width: 100%;
+  padding-bottom: 4%;
+  text-align: center;
+  height: 134px;
+}
+
+#drawingPlaceholder h2 {
+  font-weight: bold;
+}
+
+#drawingPlaceholder h3 {
+  color:white;
 }
