@@ -4,6 +4,8 @@ var server = require('http').createServer(app);
 var Moniker = require('moniker');
 var io = require('socket.io').listen(server);
 var $ = require('jquery');
+var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
 
 class Lobby {
   constructor(roomId, players, type, maxPlayers) {
@@ -44,9 +46,58 @@ server.listen(process.env.PORT || 3000);
 console.log('Server running...');
 app.use(express.static(__dirname));
 
+
+
+
+
+
+//mongoDB
+//mongoDB connection to database
+mongoose.connect('mongodb://localhost:27017/test')
+//schema for the users
+var usersSchema = mongoose.Schema({
+  name: String,
+  pass: String
+});
+//new model for the users
+var Users = mongoose.model('users', usersSchema);
+//test user object based on the model
+var name = "test";
+//hashing the password before adding user to the database
+bcrypt.hash('myPassword', 10, function(err, hash) {
+  var test = new Users({name: name, pass: hash});
+  //sending the user to the database to save
+  test.save();
+});
+//testing the hash to make sure it works
+bcrypt.compare('myPassword','$2a$10$kiGtCVAMZgX8eKiyFUKJpO0SIfLaEdwXOPQQDpK9B/buxP4m2wvwG',function(err, res) {
+  if(res) {
+    console.log("password match");
+  } else {
+    console.log("incorrect password");
+  }
+});
+
+app.get('/users', (req, res) =>{
+  mongoose.model('users').find(function(err, users){
+    res.send(users);
+  });
+});
+
+
+
+
+
+
+
+
+//Normal code
+
+
 app.get('/', (req, res) => {
   res.sendFile('/index.html');
 });
+
 app.get('/game', (req, res) => {
   res.sendFile(__dirname + '/game.html');
 });
