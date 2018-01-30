@@ -4,6 +4,7 @@ var myRoomID;
 $(function() {
   var socket = io.connect();
   var $username = $('#username');
+  var $password = $('#password');
   var $customLobbyURL = $('#customLobbyURL');
   var $userForm = $('#userForm');
   var $playerStats = $('#playerStats');
@@ -11,10 +12,6 @@ $(function() {
   var $loggedIn = $('#loggedIn');
   var $joinLobbyForm = $('#joinLobbyForm');
 
-  $(function(){
-
-
-});
   $userForm.submit(function(e) {
     e.preventDefault();
     socket.emit('islogged in', $username.val(), function(data) {
@@ -34,6 +31,11 @@ $(function() {
     var customlobbyInput = $('#customLobbyURL').val();
     console.log("attempting to join:" + customlobbyInput);
     socket.emit('join custom', customlobbyInput);
+  });
+
+  $('#registerBtn').click(function(e) {
+    e.preventDefault();
+      socket.emit('register user',$username.val(), $password.val());
   });
 
   $('#guestBtn').click(function(e) {
@@ -58,11 +60,11 @@ $(function() {
     localStorage.setItem("username", myUsername);
     //This is to stop multiple appends on the stats elements
     displayUserInfo(myUsername);
-    if(type == "user"){
+    // if(type == "user"){
     $('#lobbyInfo').find('*').removeAttr('disabled');
-  }else{
-    $('#joinLobbyForm').find('*').removeAttr('disabled');
-  }
+  // }else{
+  //   $('#joinLobbyForm').find('*').removeAttr('disabled');
+  // }
   });
 
   socket.on('revert login', function(data) {

@@ -15,9 +15,11 @@ class Lobby {
     this.type = type;
     this.inGame = false;
     this.rounds = [];
+    //guesses need to be added here
     this.images = [];
   }
 }
+
 
 class gameRound{
     constructor(roundNumber,listOfGoes) {
@@ -33,9 +35,6 @@ class userPair{
     }
 }
 
-
-
-
 defaultLobbyMax = 5;
 lobbies = [];
 loggedInUsers = [];
@@ -49,50 +48,45 @@ app.use(express.static(__dirname));
 
 
 
-
-
 //mongoDB
 //mongoDB connection to database
-mongoose.connect('mongodb://localhost:27017/test')
+mongoose.connect('mongodb://localhost:27017/Depiction')
 //schema for the users
 var usersSchema = mongoose.Schema({
-  name: String,
+  _id: String,
   pass: String
 });
 //new model for the users
 var Users = mongoose.model('users', usersSchema);
-//test user object based on the model
-var name = "test";
-//hashing the password before adding user to the database
-bcrypt.hash('myPassword', 10, function(err, hash) {
-  var test = new Users({name: name, pass: hash});
-  //sending the user to the database to save
-  test.save();
-});
 //testing the hash to make sure it works
-bcrypt.compare('myPassword','$2a$10$kiGtCVAMZgX8eKiyFUKJpO0SIfLaEdwXOPQQDpK9B/buxP4m2wvwG',function(err, res) {
-  if(res) {
-    console.log("password match");
-  } else {
-    console.log("incorrect password");
-  }
-});
+// bcrypt.compare('myPassword','$2a$10$kiGtCVAMZgX8eKiyFUKJpO0SIfLaEdwXOPQQDpK9B/buxP4m2wvwG',function(err, res) {
+//   if(res) {
+//     console.log("password match");
+//   } else {
+//     console.log("incorrect password");
+//   }
+// });
+
 
 app.get('/users', (req, res) =>{
-  mongoose.model('users').find(function(err, users){
-    res.send(users);
+  // mongoose.model('users').findOne({"_id":"test"}, function(err,user){
+    mongoose.model('users').find({}, function(err,user){
+    res.send(user);
+    // res.send(user.pass);
   });
 });
 
+function getUserPropertyFromDatabase(username, info){
+  var test = mongoose.model('users').findOne({"_id":username}, function(err,user){
 
+    return user;
+  });
 
-
-
+}
 
 
 
 //Normal code
-
 
 app.get('/', (req, res) => {
   res.sendFile('/index.html');
@@ -111,6 +105,12 @@ io.sockets.on('connection', (socket) => {
       }
     }
   });
+  socket.on('register user', (username, password) => {
+    bcrypt.hash(password, 10, function(err, hash) {
+      var user = new Users({_id: jsUcfirst(username), pass: hash});
+      user.save();
+    });
+  });
   socket.on('log out', (data) => {
     //if you logout you remove yourself from users list but remain a connection
     loggedInUsers.splice(loggedInUsers.indexOf(socket.username), 1);
@@ -119,9 +119,15 @@ io.sockets.on('connection', (socket) => {
   //Login user
   socket.on('login user', (data, callback) => {
     callback(true);
+    data = jsUcfirst(data);
+    socket.username = data;
     //Changes to uppercade and assigns to socket.username
-    socket.username = jsUcfirst(data);
-    loggedInUsers.push(socket.username);
+    // check if user is in the database
+    // if user is in the database grab hash and check against the password
+    // if correct push user and change layout
+    // else console log
+    loggedInUsers.push(data);
+    console.log(loggedInUsers);
     changeLoginLayout("user");
   });
   //Login Guest
@@ -225,6 +231,7 @@ games.on('connection', (socket) => {
   socket.on('join', (data) => {
     socket.join(data.room);
     socket.username = data.user;
+    loggedInUsers.push(socket.username);
     socket.myRoomID = data.room;
     //get index of my socket in my room
     //when you join a room - emit message letting people know you've joined.
@@ -314,9 +321,9 @@ games.on('connection', (socket) => {
 
 //gives a starting word
   socket.on('request word', () =>{
-    var names = Moniker.generator([Moniker.adjective]);
-    var word = names.choose();
-    socket.emit('receive word',jsUcfirst(word));
+    var dic = Moniker.read("gamewords.txt");
+    var item = dic.words[Math.floor(Math.random()*dic.words.length)];
+    socket.emit('receive word',jsUcfirst(item));
   });
 
   socket.on('next round', (data) =>{
@@ -429,6 +436,35 @@ var imageUrl = getImageFromRoundNumber(data);
 socket.emit('receive image',imageUrl);
 });
 
+
+//data is new gameImage
+socket.on('save guess', (data) =>{
+//for each lobby
+for (var i = 0; i < lobbies.length; i++) {
+  if(lobbies[i].roomId == socket.myRoomID){
+    //get old images list
+    var oldimages = lobbies[i].images;
+    console.log(oldimages);
+    var newimages = addGuessToImage(data, oldimages);
+    console.log(lobbies[i].images);
+    lobbies[i].images = newimages;
+    console.log(lobbies[i].images);
+  }
+}
+});
+
+
+//ovewrite lobbies[i].images with new gameImage .guess
+function addGuessToImage(gameImage, images){
+  for (var i = 0; i < images.length; i++) {
+    if (images[i].roundNumber == gameImage.roundNumber && images[i].imageUrl == gameImage.imageUrl){
+      //if found the old gameImage Edit it
+      images[i].guess = gameImage.guess;
+      return images;
+    }
+  }
+}
+
 function getImageFromRoundNumber(data){
 var lobbyObj = getLobbyByID(socket.myRoomID);
 var roundObj = getRoundFromRounds(data, lobbyObj.rounds);
@@ -455,4 +491,33 @@ function getImageForPlayer(playerToSearch, images, roundNumber){
   }
 }
 
+
+
+socket.on('get sequences', ()=>{
+var mylobby = getLobbyByID(socket.myRoomID);
+var gameimages = mylobby.images
+var numberOfRounds = mylobby.players.length-1;
+var roundNumber = 0;
+//for each sequence
+// for (var i = 1; i <= numberOfRounds+1; i++){
+//   var sequence = [];
+//   var round = getRoundFromRounds(roundNumber,mylobby.rounds)
+//   //for each go
+//   for (var i = 0; i < round.listOfGoes; i++) {
+//
+//     if(round.listOfGoes[i].player1 == socket.myUsername)
+//     {
+//
+//
+//     }
+// }
+// }
+
+var sequence = [gameimages[0]];
+socket.emit('receive sequence',sequence);
+//find image where round number == 1 and author is me
+//ad to image to array and find the pair based on author name
+//goto next round and find image where author is pair
+//repeat
+});
 });

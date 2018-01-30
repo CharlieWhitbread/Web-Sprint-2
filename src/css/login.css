@@ -21,8 +21,8 @@ body {
 }
 
 #gameDetails {
-  min-height: 235px;
-  max-height: 235px;
+  min-height: 250px;
+  max-height: 250px;
   overflow-y: scroll;
 }
 
@@ -31,8 +31,8 @@ body {
 }
 
 #loginBox {
-  min-height: 300px;
-  max-height: 300px;
+  min-height: 320px;
+  max-height: 320px;
 }
 
 #loggedIn {
@@ -45,6 +45,9 @@ body {
 
 .uiBtn {
   width: 50%;
+}
+#loginBtn{
+  width:100%;
 }
 
 #playerStats{

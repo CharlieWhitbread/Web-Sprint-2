@@ -161,6 +161,28 @@ body {
   font-weight: bold;
 }
 
-#drawingPlaceholder h3 {
-  color:white;
+#sequences{
+width:100%;
+}
+.sequence{
+  display:flex;
+  justify-content: space-between;
+}
+.sequenceImage{
+  padding: 0px;
+  border:1px solid black;
+  width:200px;
+  height:100px;
+}
+.imgSeq{
+  height: 100%;
+  width: 100%;
+}
+
+
+.mySequenceImage{
+  padding: 0px;
+  border:1px solid red;
+  height:100px;
+  width:200px;
 }

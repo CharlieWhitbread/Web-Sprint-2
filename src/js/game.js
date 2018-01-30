@@ -1,6 +1,7 @@
 myRoomID = localStorage.getItem('room');
 myUsername = localStorage.getItem('username');
 currentRound = 0;
+ended = false;
 localStorage.clear();
 
 hostControlsDrawn = false;
@@ -17,7 +18,8 @@ $inGameChat = $('#inGameChat');
 $gameChat = $('#gameChat');
 $gameMessage = $('#gameMessage');
 $roundNumber = $('#roundNumber');
-
+$endGameArea = $('#endGameArea');
+$sequences = $('#sequences');
 
 
 function scrollToBottom(data) {
@@ -88,12 +90,23 @@ $messageForm.submit(function(e) {
   e.preventDefault();
   socket.emit('send message', $message.val());
   $message.val('');
+
 });
 //sending messages in game
 $inGameChat.submit(function(e) {
   e.preventDefault();
+  if($gameMessage.val().charAt(0) == "!"){
+    var newImage = new gameImage(myUsername,currentRound-1,prevImg)
+    newImage.guess = $gameMessage.val().substr(1);
+    console.log("Testststst!!");
+    socket.emit('save guess', newImage);
+    $gameChat.append('<div id="serverMessage" class="well"><strong>Announcer</strong>: Guess Submitted!</div>');
+    $gameMessage.val('');
+  }else{
+    console.log("Rnaomddd");
   socket.emit('sendingame message', $gameMessage.val());
   $gameMessage.val('');
+}
 });
 socket.on('kick', (data) => {
   // if i'm being kicked
@@ -170,7 +183,6 @@ function gameStartup(){
 
 function normalRound(){
   roundStartUp();
-
   startRoundTimer();
 
   // this is where drawing infomation will be sent
@@ -215,6 +227,7 @@ function startRoundTimer(){
     {
       if(count == defaultRoundTimer+8 && currentRound != 1){
                getGuessImage();
+               // promptGuess();
       }
        document.getElementById("roundTimer").innerHTML= "round starting in  " + (count-defaultRoundTimer)
        socket.emit('countdown message', count-defaultRoundTimer);
@@ -241,6 +254,13 @@ socket.on('start game', () => {
   $gameArea.show();
 })
 
+function endGame(){
+  if(!ended){
+    ended = true;
+    socket.emit('get sequences');
+  }
+}
+
 socket.on('goto round', (pairs) => {
   // starting the game
   currentRound = pairs.roundNumber;
@@ -252,6 +272,8 @@ socket.on('goto round', (pairs) => {
 
   if(pairs.roundNumber == (numberOfRounds+1) || (numberOfRounds == -1) ){
     $gameArea.hide();
+    $endGameArea.show();
+    endGame();
     //final guess and display drawings
   }else if (currentRound == 1){
     gameStartup();
@@ -260,5 +282,21 @@ socket.on('goto round', (pairs) => {
   }
   socket.on('receive image', (data) =>{
     displayImage(data);
+    prevImg = data;
+  });
+
+  socket.on('receive sequence', (data)=>{
+   var sequenceId = "#"+data[0].author
+    $sequences.append('<div id="'+data[0].author+'" class="well sequence">');
+    for (var i = 0; i < data.length; i++) {
+      if(data[i].author == myUsername){
+        console.log(data);
+        $(sequenceId).append('<div class="well mySequenceImage"><img class="imgSeq" src="'+data[i].imageUrl+'"></img></div>')
+      }else{
+        $(sequenceId).append('<div class="well sequenceImage"><img class="imgSeq" src="'+data[i].imageUrl+'"></img></div>')
+      }
+    }
+    $sequences.append('</div>')
+
   });
 })

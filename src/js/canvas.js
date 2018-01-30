@@ -2,12 +2,14 @@ var mousePressed = false;
 var lastX, lastY;
 var ctx;
 var drawing = false;
+var prevImg;
 
 class gameImage {
   constructor(author, roundNumber, imageUrl) {
     this.author = author;
     this.roundNumber = roundNumber;
     this.imageUrl = imageUrl;
+    this.guess = "";
   }
 }
 
